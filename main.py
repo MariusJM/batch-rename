@@ -21,7 +21,7 @@ class App:
         self.frame_select.pack_propagate(False)
 
         # browse button
-        self.button_browse = tk.Button(master=self.frame_select, text="Browse", command=lambda:select_files())
+        self.button_browse = tk.Button(master=self.frame_select, text="Browse", command=lambda:[select_files(), preview_filenames("prefix_", "name", "_suffix")])
         
         self.button_browse.pack(side="left", padx=5,pady=5, fill="both", expand=True)
 
@@ -44,9 +44,9 @@ class App:
         # numeric scale
         self.frame_scale = tk.Frame(master=self.frame_rename, bg=background)
         self.scale_value = tk.DoubleVar()
-        self.label_scale = tk.Label(master=self.frame_scale, text=f"Scale Value: {self.scale_value.get()}")
+        self.label_scale = tk.Label(master=self.frame_scale, text=f"Sequence number: ... _{int(self.scale_value.get())}.ext", bg=background)
         
-        self.scale = tk.Scale(master=self.frame_scale, from_=1, to=6, orient="horizontal", variable=self.scale_value, command=self.update_scale_label)
+        self.scale = tk.Scale(master=self.frame_scale, from_=1, to=6, orient="horizontal", bg=background, variable=self.scale_value, command=self.update_scale_label)
 
         
         # suffix
@@ -85,9 +85,9 @@ class App:
         self.frame_preview = tk.Frame(master=master, bg="#e0e0e0")
         self.frame_preview.propagate(True)
         self.label_original_name_label = tk.Label(master=self.frame_preview, text="Original file name", bg=background)
-        self.label_original_name = tk.Label(master=self.frame_preview, text="file.png")
+        self.label_original_name = tk.Label(master=self.frame_preview, text="file.png", bg=background)
         self.label_new_name_label = tk.Label(master=self.frame_preview, text="New file name", bg=background)
-        self.label_new_name = tk.Label(master=self.frame_preview, text="prefix_file_siffix.png")
+        self.label_new_name = tk.Label(master=self.frame_preview, text="prefix_file_siffix.png", bg=background)
 
         self.label_original_name_label.pack(padx=5,pady=5, anchor="w")
         self.label_original_name.pack(padx=5,pady=5, anchor="w")
@@ -122,8 +122,8 @@ class App:
                 first_file = self.selected_files[0]
                 original_file_name = first_file.split("/")[-1]
                 extension = first_file.split(".")[-1]
-                self.label_original_name.config(text=f"{original_file_name}")
-                self.label_new_name.config(text=f"{prefix}{name}{suffix}_{str(counter).zfill(int(self.scale_value.get()))}.{extension}...")
+                self.label_original_name.config(text=f"{original_file_name} ... + {len(self.selected_files)} more files selected")
+                self.label_new_name.config(text=f"{prefix}{name}{suffix}_{str(counter).zfill(int(self.scale_value.get()))}.{extension}...{prefix}{name}{suffix}_{str(len(self.selected_files)).zfill(int(self.scale_value.get()))}.{extension}")
                 print(self.selected_files)
             except IndexError:
                 messagebox.showinfo("File selection", "Selec at least one file first")
@@ -157,7 +157,7 @@ class App:
 
     def update_scale_label(self, value):
         number_to_show = str(value).zfill(int(value))
-        self.label_scale.config(text=f"Sequence number {number_to_show}")
+        self.label_scale.config(text=f"Sequence number: ... _{number_to_show}.ext")
 
 
 
