@@ -4,53 +4,65 @@ class App:
     def __init__(self, master):
         self.master = master
         master.title("batch-rename")
-        # self.master.geometry("600x300")
-        self.master.pack_propagate(True)
+        self.master.geometry("600x300")
+        self.master.pack_propagate(False)
+
         # top frame for file selection
-        self.frame_select = tk.Frame(master, width=500, height=30, bg="#e0e0e0")
-        self.frame_select.pack_propagate(True)
-        self.button_browse = tk.Button(master=self.frame_select, text="Browse")
-        self.button_browse.pack(padx=5, pady=5)
+        self.frame_select = tk.Frame(master, width=600, height=40, bg="#e0e0e0")
+        self.frame_select.pack_propagate(False)
+
+        # browse button
+        self.button_browse = tk.Button(master=self.frame_select, width=200, height=40, text="Browse")
+        self.button_browse.pack(anchor="n", padx=5, pady=5)
 
         # rename options frame
-        self.frame_rename = tk.Frame(master, width=500, height=60, bg="#e0e0e0")
+        self.frame_rename = tk.Frame(master, width=600, bg="#e0e0e0")
         self.frame_rename.pack_propagate(True)
         
         self.label_rename = tk.Label(master=self.frame_rename, text="Rename")
-        self.label_rename.pack(side="top", padx=2, pady=2, anchor="w")  # Set anchor to "west" (left)
+        self.label_rename.pack(side="top", padx=5, pady=5, anchor="w")
         
         # prefix
-        self.frame_prefix = tk.Frame(master=self.frame_rename, width=200, height=30, bg="#e0e0e0")
+        self.frame_prefix = tk.Frame(master=self.frame_rename, width=190, height=30, bg="#e0e0e0")
         self.frame_prefix.pack(side="left", padx=5, pady=5)
         self.label_prefix = tk.Label(master=self.frame_prefix, text="Prefix:")
-        self.label_prefix.pack(side="left", padx=5, pady=5, anchor="w")  # Set anchor to "west" (left)
+        self.label_prefix.pack(side="left", padx=5, pady=5, anchor="w")
         self.entry_prefix = tk.Entry(master=self.frame_prefix, justify="left")
-        self.entry_prefix.pack(padx=5, pady=5)
+        self.entry_prefix.pack()
 
         # name
-        self.frame_name = tk.Frame(master=self.frame_rename, width=200, height=30, bg="#e0e0e0")
+        self.frame_name = tk.Frame(master=self.frame_rename, width=190, height=30, bg="#e0e0e0")
         self.frame_name.pack(side="left", padx=5, pady=5)
         self.label_name = tk.Label(master=self.frame_name, text="Name:")
-        self.label_name.pack(side="left", padx=5, pady=5, anchor="w")  # Set anchor to "west" (left)
+        self.label_name.pack(side="left", padx=5, pady=5, anchor="w")
         self.entry_name = tk.Entry(master=self.frame_name, justify="left")
-        self.entry_name.pack(padx=5, pady=5)
+        self.entry_name.pack()
         
         # suffix
-        self.frame_suffix = tk.Frame(master=self.frame_rename, width=200, height=30, bg="#e0e0e0")
+        self.frame_suffix = tk.Frame(master=self.frame_rename, width=190, height=30, bg="#e0e0e0")
         self.frame_suffix.pack(side="left", padx=5, pady=5)
         self.label_suffix = tk.Label(master=self.frame_suffix, text="Suffix:")
-        self.label_suffix.pack(side="left", padx=5, pady=5, anchor="w")  # Set anchor to "west" (left)
+        self.label_suffix.pack(side="left", padx=5, pady=5, anchor="w")
         self.entry_suffix = tk.Entry(master=self.frame_suffix, justify="left")
-        self.entry_suffix.pack(padx=5, pady=5)
+        self.entry_suffix.pack()
 
+        # execute buttons
+        self.frame_execute = tk.Frame(master=master, width=600, height=60, bg="#e0e0e0")
+        self.frame_execute.pack_propagate(False)
+        self.button_rename = tk.Button(master=self.frame_execute, text="Rename")
+        self.button_rename.pack(side="left", padx=5,pady=5, fill="both", expand=True)
+        self.button_preview = tk.Button(master=self.frame_execute, text="Preview")
+        self.button_preview.pack(side="left", padx=5,pady=5, fill="both", expand=True)
+        self.button_quit = tk.Button(master=self.frame_execute, text="Quit")
+        self.button_quit.pack(side="left", padx=5,pady=5, fill="both", expand=True)
+        
         #pack frames
-        self.frame_select.pack(padx=5,pady=5)
-        self.frame_rename.pack(padx=2,pady=2)
+        self.frame_select.pack(expand=False, padx=5,pady=5, anchor="w")
+        self.frame_rename.pack(expand=False, padx=5,pady=5, anchor="w")
+        self.frame_execute.pack(expand=False, padx=5,pady=5, anchor="w")
         master.resizable(False, False)
 
-    def on_button_click(self):
-        name = self.entry.get()
-        self.label.config(text="Hello, " + name)
+
 
 if __name__ == "__main__":
     root = tk.Tk()
