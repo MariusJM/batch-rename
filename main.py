@@ -106,25 +106,27 @@ class App:
             self.selected_files = list(filedialog.askopenfilenames(title='Open files', initialdir='/', filetypes=filetypes))
 
         def rename_files(prefix, name, suffix):
-            counter = 1
-            try:
-                for file in self.selected_files:
-                    file_path, file_name = file.rsplit("/", 1)
-                    extension = file_name.split(".")[-1]
-                    new_file_name = file_path + "/" + prefix + name + suffix + "_" + str(counter).zfill(int(self.scale_value.get())) + "." + extension
-                    print(f"file path = {file_path} | file name = {file_name} | extension = {extension} | new file name = {new_file_name}")
-                    rename(file, new_file_name)
-                    counter += 1
-                startfile(file_path)
-            except PermissionError:
-                messagebox.showerror("Permission error", "You don't have necessary permisions to rename one or more of these files.")
-            
+            if all(value == "" for value in (prefix, name, suffix)):
+                response = messagebox.askyesno("Values are empty", "Warning! Prefix, name, suffix values are empty. Are you sure you want to continue renaming?")
+                if response is None:
+                    return
+                elif response:
+                    self._execute_rename(prefix, name, suffix)
+
+            else:
+                self._execute_rename(prefix, name, suffix)
+
         def preview_filenames(prefix, name, suffix):
-            counter = 1
-            first_file = self.selected_files[0]
-            extension = first_file.split(".")[-1]
-            self.label_new_name.config(text=f"{prefix}{name}{suffix}_{str(counter).zfill(int(self.scale_value.get()))}.{extension}...")
-            print(self.selected_files)
+            try:
+                counter = 1
+                first_file = self.selected_files[0]
+                original_file_name = first_file.split("/")[-1]
+                extension = first_file.split(".")[-1]
+                self.label_original_name.config(text=f"{original_file_name}")
+                self.label_new_name.config(text=f"{prefix}{name}{suffix}_{str(counter).zfill(int(self.scale_value.get()))}.{extension}...")
+                print(self.selected_files)
+            except IndexError:
+                messagebox.showinfo("File selection", "Selec at least one file first")
 
         def confirm_exit():
             response = messagebox.askyesno("Confirm Exit", "Are you sure you want to exit?")
@@ -132,6 +134,22 @@ class App:
                 return
             elif response:
                 root.destroy()
+
+
+    def _execute_rename(self, prefix, name, suffix):
+        counter = 1
+        try:
+            for file in self.selected_files:
+                file_path, file_name = file.rsplit("/", 1)
+                extension = file_name.split(".")[-1]
+                new_file_name = file_path + "/" + prefix + name + suffix + "_" + str(counter).zfill(int(self.scale_value.get())) + "." + extension
+                print(f"file path = {file_path} | file name = {file_name} | extension = {extension} | new file name = {new_file_name}")
+                rename(file, new_file_name)
+                counter += 1
+            startfile(file_path)
+        except PermissionError:
+            messagebox.showerror("Permission error", "You don't have necessary permissions to rename one or more of these files.")
+
 
     def update_scale_label(self, value):
         number_to_show = str(value).zfill(int(value))
