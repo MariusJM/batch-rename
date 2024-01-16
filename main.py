@@ -112,7 +112,8 @@ class App:
                     return
                 elif response:
                     self._execute_rename(prefix, name, suffix)
-
+            elif name == "" and prefix != "" or suffix != "":
+                self._add_presuffixes(prefix, name, suffix)
             else:
                 self._execute_rename(prefix, name, suffix)
 
@@ -135,6 +136,18 @@ class App:
             elif response:
                 root.destroy()
 
+    def _add_presuffixes(self, prefix, name, suffix):
+        counter = 1
+        try:
+            for file in self.selected_files:
+                file_path, file_name = file.rsplit("/", 1)
+                extension = file_name.split(".")[-1]
+                new_file_name = file_path + "/" + prefix + file_name.rsplit(".")[0] + suffix + "_" + str(counter).zfill(int(self.scale_value.get())) + "." + extension
+                rename(file, new_file_name)
+                counter += 1
+            startfile(file_path)
+        except PermissionError:
+            messagebox.showerror("Permission error", "You don't have necessary permissions to rename one or more of these files.")
 
     def _execute_rename(self, prefix, name, suffix):
         counter = 1
@@ -143,7 +156,6 @@ class App:
                 file_path, file_name = file.rsplit("/", 1)
                 extension = file_name.split(".")[-1]
                 new_file_name = file_path + "/" + prefix + name + suffix + "_" + str(counter).zfill(int(self.scale_value.get())) + "." + extension
-                print(f"file path = {file_path} | file name = {file_name} | extension = {extension} | new file name = {new_file_name}")
                 rename(file, new_file_name)
                 counter += 1
             startfile(file_path)
