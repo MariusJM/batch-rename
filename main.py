@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
+from os import rename
+from os import startfile
 
 class App:
     def __init__(self, master):
@@ -13,7 +15,7 @@ class App:
         background = "#e0e0e0"
         self.master.configure(bg=background)
         self.selected_files = []
-
+        
         # top frame for file selection
         self.frame_select = tk.Frame(master, bg=background, height=60)
         self.frame_select.pack_propagate(False)
@@ -60,7 +62,7 @@ class App:
         self.frame_execute = tk.Frame(master=master, width=600, height=60, bg=background)
         self.frame_execute.pack_propagate(False)
 
-        self.button_rename = tk.Button(master=self.frame_execute, text="Rename")
+        self.button_rename = tk.Button(master=self.frame_execute, text="Rename", command=lambda:rename_files(self.entry_prefix.get(),self.entry_name.get(),self.entry_suffix.get()))
         self.button_preview = tk.Button(master=self.frame_execute, text="Preview", command=lambda:print_selected_files())
         self.button_quit = tk.Button(master=self.frame_execute, text="Quit", command=lambda:confirm_exit())
 
@@ -93,6 +95,19 @@ class App:
         def select_files():
             filetypes = (('All files', '*.*'),('text files', '*.txt'))
             self.selected_files = list(filedialog.askopenfilenames(title='Open files', initialdir='/', filetypes=filetypes))
+
+        def rename_files(prefix, name, suffix):
+            for file in self.selected_files:
+                file_path, file_name = file.rsplit("/", 1)
+                extension = file_name.split(".")[-1]
+                new_file_name = file_path + "/" + prefix + name + suffix + "." + extension
+                print(f"file path = {file_path} | file name = {file_name} | extension = {extension} | new file name = {new_file_name}")
+                rename(file, new_file_name)
+            
+            startfile(file_path)
+
+        # rename(src, dst, src_dir_fd=None, dst_dir_fd=None)
+
 
         def print_selected_files():
             print(self.selected_files)
