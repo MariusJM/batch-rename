@@ -149,6 +149,10 @@ class App:
             startfile(file_path)
         except PermissionError:
             messagebox.showerror("Permission error", "You don't have necessary permissions to rename one or more of these files.")
+        except FileExistsError:
+            messagebox.showerror("File conflict", "File with specified name allready exists in this directory. Resolve the conflict and try again.")
+        except FileNotFoundError:
+            messagebox.showerror("File not found", "Please select the files you want to rename first.")
 
 
     def update_scale_label(self, value):
