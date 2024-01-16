@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog
+from tkinter import messagebox
 
 class App:
     def __init__(self, master):
@@ -61,7 +62,7 @@ class App:
 
         self.button_rename = tk.Button(master=self.frame_execute, text="Rename")
         self.button_preview = tk.Button(master=self.frame_execute, text="Preview", command=lambda:print_selected_files())
-        self.button_quit = tk.Button(master=self.frame_execute, text="Quit")
+        self.button_quit = tk.Button(master=self.frame_execute, text="Quit", command=lambda:confirm_exit())
 
         self.button_rename.pack(side="left", padx=5,pady=5, fill="both", expand=True)
         self.button_preview.pack(side="left", padx=5,pady=5, fill="both", expand=True)
@@ -95,6 +96,14 @@ class App:
 
         def print_selected_files():
             print(self.selected_files)
+
+        def confirm_exit():
+            response = messagebox.askyesno("Confirm Exit", "Are you sure you want to exit?")
+            if response is None:
+                return
+            elif response:
+                root.destroy()
+
 
 if __name__ == "__main__":
     root = tk.Tk()
