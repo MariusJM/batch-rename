@@ -1,20 +1,24 @@
 import tkinter as tk
+from tkinter import filedialog
 
 class App:
     def __init__(self, master):
         self.master = master
         master.title("batch-rename")
         self.master.geometry("600x330")
+        self.master.minsize(600, 330)
         self.master.pack_propagate(False)
         label_font = ("Helvetica", 10, "bold")
         background = "#e0e0e0"
+        self.master.configure(bg=background)
+        self.selected_files = []
 
         # top frame for file selection
-        self.frame_select = tk.Frame(master, bg=background)
-        self.frame_select.pack_propagate(True)
+        self.frame_select = tk.Frame(master, bg=background, height=60)
+        self.frame_select.pack_propagate(False)
 
         # browse button
-        self.button_browse = tk.Button(master=self.frame_select, text="Browse")
+        self.button_browse = tk.Button(master=self.frame_select, text="Browse", command=lambda:select_files())
         
         self.button_browse.pack(side="left", padx=5,pady=5, fill="both", expand=True)
 
@@ -22,7 +26,6 @@ class App:
         self.frame_rename = tk.Frame(master=master, width=600, height=65, bg=background)
         self.frame_rename.pack_propagate(False)
         self.label_rename = tk.Label(master=self.frame_rename, text="Rename", font=label_font, bg=background)
-        # self.label_rename.place(relx=0.5, rely=0.5, anchor="center")
         self.label_rename.pack(side="top", padx=1, pady=1, anchor="center")
         
         # prefix
@@ -55,15 +58,14 @@ class App:
         # execute buttons
         self.frame_execute = tk.Frame(master=master, width=600, height=60, bg=background)
         self.frame_execute.pack_propagate(False)
+
         self.button_rename = tk.Button(master=self.frame_execute, text="Rename")
-        self.button_preview = tk.Button(master=self.frame_execute, text="Preview")
+        self.button_preview = tk.Button(master=self.frame_execute, text="Preview", command=lambda:print_selected_files())
         self.button_quit = tk.Button(master=self.frame_execute, text="Quit")
 
         self.button_rename.pack(side="left", padx=5,pady=5, fill="both", expand=True)
         self.button_preview.pack(side="left", padx=5,pady=5, fill="both", expand=True)
         self.button_quit.pack(side="left", padx=5,pady=5, fill="both", expand=True)
-
-
 
         # preview window
         self.frame_preview = tk.Frame(master=master, bg="#e0e0e0")
@@ -85,7 +87,14 @@ class App:
         self.frame_preview.pack(fill="x", expand=True, padx=5,pady=5, anchor="w")
         master.resizable(True, False)
 
+        
 
+        def select_files():
+            filetypes = (('All files', '*.*'),('text files', '*.txt'))
+            self.selected_files = list(filedialog.askopenfilenames(title='Open files', initialdir='/', filetypes=filetypes))
+
+        def print_selected_files():
+            print(self.selected_files)
 
 if __name__ == "__main__":
     root = tk.Tk()
