@@ -8,8 +8,8 @@ class App:
     def __init__(self, master):
         self.master = master
         master.title("batch-rename")
-        self.master.geometry("600x330")
-        self.master.minsize(600, 450)
+        self.master.geometry("600x550")
+        self.master.minsize(600, 550)
         self.master.pack_propagate(False)
         label_font = ("Helvetica", 10, "bold")
         background = "#e0e0e0"
@@ -26,7 +26,7 @@ class App:
         self.button_browse.pack(side="left", padx=5,pady=5, fill="both", expand=True)
 
         # rename options frame
-        self.frame_rename = tk.Frame(master=master, width=600, height=165, bg=background)
+        self.frame_rename = tk.Frame(master=master, width=600, height=255, bg=background)
         self.frame_rename.pack_propagate(False)
         self.label_rename = tk.Label(master=self.frame_rename, text="Rename", font=label_font, bg=background)
         self.label_rename.pack(side="top", padx=1, pady=1, anchor="center")
@@ -36,13 +36,17 @@ class App:
         self.label_prefix = tk.Label(master=self.frame_prefix, text="Prefix:", bg=background)
         self.entry_prefix = tk.Entry(master=self.frame_prefix, justify="left")
 
-
-
         # name
         self.frame_name = tk.Frame(master=self.frame_rename, width=190, height=30, bg=background)
         self.label_name = tk.Label(master=self.frame_name, text="Name:", bg=background)
         self.entry_name = tk.Entry(master=self.frame_name, justify="left")
 
+        # numeric scale
+        self.frame_scale = tk.Frame(master=self.frame_rename, bg=background)
+        self.scale_value = tk.DoubleVar()
+        self.label_scale = tk.Label(master=self.frame_scale, text=f"Scale Value: {self.scale_value.get()}")
+        
+        self.scale = tk.Scale(master=self.frame_scale, from_=1, to=6, orient="horizontal", variable=self.scale_value, command=self.update_scale_label)
 
         
         # suffix
@@ -60,12 +64,17 @@ class App:
         self.label_suffix.pack(side="left", padx=5, pady=5, anchor="w")
         self.entry_suffix.pack(fill="x", expand=True)
 
+        self.label_scale.pack(padx=5, pady=5, anchor="n")
+
+        self.frame_scale.pack(fill="x", expand=True, padx=5,pady=5)
+        self.scale.pack(expand=True, fill="both", side="left", padx=5,pady=5)
+
         # execute buttons
         self.frame_execute = tk.Frame(master=master, width=600, height=60, bg=background)
         self.frame_execute.pack_propagate(False)
 
         self.button_rename = tk.Button(master=self.frame_execute, text="Rename", command=lambda:rename_files(self.entry_prefix.get(),self.entry_name.get(),self.entry_suffix.get()))
-        self.button_preview = tk.Button(master=self.frame_execute, text="Preview", command=lambda:print_selected_files())
+        self.button_preview = tk.Button(master=self.frame_execute, text="Preview", command=lambda:preview_filenames(self.entry_prefix.get(),self.entry_name.get(),self.entry_suffix.get()))
         self.button_quit = tk.Button(master=self.frame_execute, text="Quit", command=lambda:confirm_exit())
 
         self.button_rename.pack(side="left", padx=5,pady=5, fill="both", expand=True)
@@ -92,26 +101,29 @@ class App:
         self.frame_preview.pack(fill="x", expand=True, padx=5,pady=5, anchor="nw")
         master.resizable(True, True)
 
-        
-
         def select_files():
             filetypes = (('All files', '*.*'),('text files', '*.txt'))
             self.selected_files = list(filedialog.askopenfilenames(title='Open files', initialdir='/', filetypes=filetypes))
 
         def rename_files(prefix, name, suffix):
-            for file in self.selected_files:
-                file_path, file_name = file.rsplit("/", 1)
-                extension = file_name.split(".")[-1]
-                new_file_name = file_path + "/" + prefix + name + suffix + "." + extension
-                print(f"file path = {file_path} | file name = {file_name} | extension = {extension} | new file name = {new_file_name}")
-                rename(file, new_file_name)
+            counter = 1
+            try:
+                for file in self.selected_files:
+                    file_path, file_name = file.rsplit("/", 1)
+                    extension = file_name.split(".")[-1]
+                    new_file_name = file_path + "/" + prefix + name + suffix + "_" + str(counter).zfill(int(self.scale_value.get())) + "." + extension
+                    print(f"file path = {file_path} | file name = {file_name} | extension = {extension} | new file name = {new_file_name}")
+                    rename(file, new_file_name)
+                    counter += 1
+                startfile(file_path)
+            except PermissionError:
+                messagebox.showerror("Permission error", "You don't have necessary permisions to rename one or more of these files.")
             
-            startfile(file_path)
-
-        # rename(src, dst, src_dir_fd=None, dst_dir_fd=None)
-
-
-        def print_selected_files():
+        def preview_filenames(prefix, name, suffix):
+            counter = 1
+            first_file = self.selected_files[0]
+            extension = first_file.split(".")[-1]
+            self.label_new_name.config(text=f"{prefix}{name}{suffix}_{str(counter).zfill(int(self.scale_value.get()))}.{extension}...")
             print(self.selected_files)
 
         def confirm_exit():
@@ -121,6 +133,13 @@ class App:
             elif response:
                 root.destroy()
 
+    def update_scale_label(self, value):
+        number_to_show = str(value).zfill(int(value))
+        self.label_scale.config(text=f"Sequence number {number_to_show}")
+
+
+
+    
 
 if __name__ == "__main__":
     root = tk.Tk()
