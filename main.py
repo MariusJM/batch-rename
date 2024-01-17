@@ -35,17 +35,11 @@ class App:
         self.frame_prefix = tk.Frame(master=self.frame_rename, width=190, height=30, bg=background)
         self.label_prefix = tk.Label(master=self.frame_prefix, text="Prefix:", bg=background)
         self.entry_prefix = tk.Entry(master=self.frame_prefix, justify="left")
-        self.entry_prefix.insert(0, "Enter file name prefix. Project_ , Draft_ , Old_ , etc..")
-        self.entry_prefix.bind("<FocusIn>", self.on_entry_focus_in)
-        self.entry_prefix.bind("<FocusOut>", self.on_entry_focus_out)
 
         # name
         self.frame_name = tk.Frame(master=self.frame_rename, width=190, height=30, bg=background)
         self.label_name = tk.Label(master=self.frame_name, text="Name:", bg=background)
         self.entry_name = tk.Entry(master=self.frame_name, justify="left")
-        self.entry_name.insert(0, "Enter file name. If no name is provided old file name will be used.")
-        self.entry_name.bind("<FocusIn>", self.on_entry_focus_in)
-        self.entry_name.bind("<FocusOut>", self.on_entry_focus_out)
 
         # numeric scale
         self.frame_scale = tk.Frame(master=self.frame_rename, bg=background)
@@ -59,12 +53,6 @@ class App:
         self.frame_suffix = tk.Frame(master=self.frame_rename, width=190, height=30, bg=background)
         self.label_suffix = tk.Label(master=self.frame_suffix, text="Suffix:", bg=background)
         self.entry_suffix = tk.Entry(master=self.frame_suffix, justify="left")
-        self.entry_suffix.insert(0, "Enter file name suffix. _V1 , _RevA , _Final, _Backup , etc..")
-        self.entry_suffix.bind("<FocusIn>", self.on_entry_focus_in)
-        self.entry_suffix.bind("<FocusOut>", self.on_entry_focus_out)
-
-
-
 
         self.frame_prefix.pack(fill="x", expand=True, padx=5, pady=5)
         self.label_prefix.pack(side="left", padx=5, pady=5, anchor="w")
@@ -146,17 +134,6 @@ class App:
                 return
             elif response:
                 root.destroy()
-
-
-    def on_entry_focus_in(self, event):
-        if self.entry_suffix.get() == "Enter file name suffix. _V1 , _RevA , _Final, _Backup , etc..":
-            self.entry_suffix.delete(0, tk.END)
-            self.entry_suffix.config(fg='black')
-
-    def on_entry_focus_out(self, event):
-        if not self.entry_suffix.get():
-            self.entry_suffix.insert(0, "Enter file name suffix. _V1 , _RevA , _Final, _Backup , etc..")
-            self.entry_suffix.config(fg='gray')
 
 
     def _add_presuffixes(self, prefix, name, suffix):
