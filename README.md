@@ -1,6 +1,6 @@
 # Batch Rename Tool
 
-<div align="center">
+<div>
   <img src="image.png" alt="Batch Rename Tool" width="400px">
 </div>
 
